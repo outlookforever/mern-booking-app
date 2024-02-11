@@ -4,6 +4,8 @@ import TypeSection from './TypeSection'
 import FacilitiesSections from './FacilitiesSections'
 import GuestSection from './GuestSection'
 import ImagesSections from './ImagesSections'
+import { HotelType } from '../../../../backend/src/shared/types'
+import { useEffect } from 'react'
 
 export type HotelFormData = {
   userId: string
@@ -24,16 +26,27 @@ export type HotelFormData = {
 type Props = {
   onSave: (hotelFormData: FormData) => void
   isLoading: boolean
+  hotel?: HotelType
 }
 
-const ManageHotelForms = ({ onSave, isLoading }: Props) => {
+const ManageHotelForms = ({ onSave, isLoading, hotel }: Props) => {
   const formMethod = useForm<HotelFormData>()
-  const { handleSubmit } = formMethod
+  const { handleSubmit, reset } = formMethod
+
+  // TODO: с помощью этого подставляются данные при редактировании
+  useEffect(() => {
+    reset(hotel)
+  }, [hotel, reset])
 
   const onSubmit = handleSubmit((formDataJson: HotelFormData) => {
     // TODO:
     // перед отправкой необходимо нашу форму преобразовать в json
     const formData = new FormData()
+
+    // TODO: для редактирования страницы
+    if (hotel) {
+      formData.append('hotelId', hotel._id)
+    }
     formData.append('name', formDataJson.name)
     formData.append('city', formDataJson.city)
     formData.append('country', formDataJson.country)
@@ -47,6 +60,13 @@ const ManageHotelForms = ({ onSave, isLoading }: Props) => {
     formDataJson.facilities.forEach((facility, index) => {
       formData.append(`facilities[${index}]`, facility)
     })
+
+    // TODO: для редактирования страницы
+    if (formDataJson.imageUrls) {
+      formDataJson.imageUrls.forEach((url, index) => {
+        formData.append(`imageUrls[${index}]`, url)
+      })
+    }
 
     Array.from(formDataJson.imageFiles).forEach((imageFile) => {
       formData.append(`imageFiles`, imageFile)
