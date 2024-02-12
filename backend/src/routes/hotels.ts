@@ -4,6 +4,7 @@ import { HotelSearchResponse } from '../shared/types'
 
 const router = express.Router()
 
+// TODO: /api/hotels/search
 router.get('/search', async(req: Request, res: Response) => {
   try {
     // TODO::. Pagination

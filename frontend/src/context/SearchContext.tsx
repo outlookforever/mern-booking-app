@@ -71,6 +71,7 @@ export const SearchContextProvider = ({
 
 // FIXME:l
 // создаем крючок чтобы легче дергать
+// eslint-disable-next-line react-refresh/only-export-components
 export const useSearchContext = () => {
   const context = useContext(SearchContext)
   return context as SearchContext
