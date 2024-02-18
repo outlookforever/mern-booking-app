@@ -16,6 +16,7 @@ const Search = () => {
   const [selectedHotelTypes, setSelectedHotelTypes] = useState<string[]>([])
   const [selectedFacilities, setSelectedFacilities] = useState<string[]>([])
   const [selectedPrice, setSelectedPrice] = useState<number | undefined>()
+  const [sortOption, setSortOption] = useState<string>('')
 
   //TODO: берем данные из формы поиска
   // и преобразуем в объект параметров поиска
@@ -31,6 +32,8 @@ const Search = () => {
     types: selectedHotelTypes,
     facilities: selectedFacilities,
     maxPrice: selectedPrice?.toString(),
+    // TODO: Сортировка
+    sortOption,
   }
 
   // TODO: ['searchHotels', searchParams] - походу это массив зависимостей
@@ -106,6 +109,17 @@ const Search = () => {
             {search.destination ? ` in ${search.destination}` : ''}
           </span>
           {/* FIXME: Sort options */}
+          <select
+            value={sortOption}
+            onChange={(event) => {
+              setSortOption(event.target.value)
+            }}
+            className="p-2 border rounded-md">
+            <option value="">Sort By</option>
+            <option value="starRating">Star Rating</option>
+            <option value="pricePerNightAsc">Price Per Night (Asc)</option>
+            <option value="pricePerNightDesc">Price Per Night (Desc)</option>
+          </select>
         </div>
         {hotelData?.data.map((hotel) => (
           <SearchResultsCard key={hotel._id} hotel={hotel} />
