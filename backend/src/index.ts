@@ -50,5 +50,5 @@ app.get("*", (req: Request, res: Response) => {
 })
 
 app.listen(4200,() => {
-    console.log('Sever running on port 4200');
+    console.log('Server running on port 4200');
 }) 
