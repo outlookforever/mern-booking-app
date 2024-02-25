@@ -217,11 +217,12 @@ router.post('/:hotelId/bookings', verifyToken, async(req: Request, res: Response
       userId: req.userId 
     }
 
-    const hotel = await Hotel.findOneAndUpdate({_id: req.params.hotelId}, {
-      $push: {
-        bookings: newBooking
+    const hotel = await Hotel.findOneAndUpdate(
+      { _id: req.params.hotelId },
+      {
+        $push: { bookings: newBooking },
       }
-    })
+    )
 
     if(!hotel) {
       return res.status(400).json({
@@ -230,7 +231,7 @@ router.post('/:hotelId/bookings', verifyToken, async(req: Request, res: Response
     }
 
     await hotel.save()
-    res.status(200).json(hotel)
+    res.status(200).send()
   } catch (error) {
     console.log("🚀routes/hotel.ts ~ router.post/:hotelId/bookings ~ error:", error)
     res.status(500).json({
