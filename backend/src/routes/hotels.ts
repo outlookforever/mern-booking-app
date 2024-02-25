@@ -2,6 +2,10 @@ import express, {Request, Response} from 'express'
 import Hotel from '../models/hotel'
 import { HotelSearchResponse } from '../shared/types'
 import { param, validationResult } from 'express-validator';
+import Stripe from 'stripe'
+import verifyToken from '../middleware/auth';
+
+const stripe = new Stripe(process.env.STRIPE_API_KEY as string)
 
 const router = express.Router()
 
@@ -137,6 +141,50 @@ router.get('/:id',
     
   }
 })
+
+// TODO: /api/hotels
+router.post('/:hotelId/bookings/payment-intent', verifyToken, async(req: Request, res: Response) => {
+  // TODO: 
+  // 1 total coast
+  // 2 hotelId
+  // 3 userId
+
+  const hotelId = req.params.hotelId
+  const {numberOfNights} = req.body
+
+
+  const hotel = await Hotel.findById(hotelId)
+  if (!hotel) {
+    return res.status(400).json({
+      message: 'Hotel not found'
+    })
+  } 
+  const totalCoast = hotel.pricePerNight * numberOfNights 
+
+  const paymentIntent = await stripe.paymentIntents.create({
+    amount: totalCoast,
+    currency: 'usd',
+    metadata: {
+      hotelId,
+      userId: req.userId
+    }
+  })
+
+  if(!paymentIntent.client_secret) {
+    return res.status(500).json({
+      message: 'Error creating payment intent'
+    })
+  }
+
+  const response = {
+    paymentIntentId: paymentIntent.id,
+    clientSecret: paymentIntent.client_secret.toString(),
+    totalCoast
+  }
+
+  res.send(response)
+})
+
 
 
 
